@@ -1,57 +1,56 @@
-
 import java.awt.*;
 import javax.swing.*;
-public class FractalTreePanel2 extends JComponent {
-    int x2, y2;
-    private double angle = Math.PI;
 
-    private int deltaX;
-    private int deltaY;
+public class FractalTreePanel extends JComponent {
+    private int length=150;
+    private double branchLength=50;
+    private double lengthReductionFactor = 0.80;
 
-    private int dis;
-    private int length=10;
+    /*
+     * it takes in points and it uses the angle and the length to calculate the new points
+     * draws the line and strokes it according to the length of the branch
+    */
+    public void drawFractal(int length, int x1, int y1, int x5, int y5, double angle, Graphics g){
+        int x3,y3,x2,y2;
+        if(length > 1){
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setStroke(new BasicStroke((int)length/15));
+            if(length >= 20)
+            {
+                g.setColor(Color.red);
 
-    private int fractalLen = 50;
-    static int count = 0;
+            }
+            else if (length >= 10)
+            {
+                g.setColor(Color.green);
+            }
 
-    public FractalTreePanel2(){
+            else{
+                g.setColor(Color.black);
+            }
+
+            x5 =x1+  (int)(Math.cos(angle)* length); 
+            y5 =y1 - (int)(  Math.sin(angle) * length); 
+            g.drawLine(x1,y1,x5,y5);
+
+            x1=x5;
+            y1=y5;
+
+            // System.out.println("x1: "+x1+",y1: "+y1+"\t\tx5: "+x5+",y5: "+y5+
+            //   "\t\tangle: "+angle + "\t\tlength: "+length);
+
+            drawFractal((int)(length*lengthReductionFactor), x1, y1, x5, y5, angle+Math.PI/10, g);
+            drawFractal((int)(length*lengthReductionFactor), x1, y1, x5, y5,angle-Math.PI/4, g);
+
+        }
     }
 
-    public void drawFractal(int length, int x1, int y1, Graphics g){
-
-        if(length ==1){
-            g.drawLine(x1,y1,x2,y2);
-        }
-        else{
-
-            x2 =x1+ (int) Math.abs((fractalLen*Math.sin(angle)));
-            y2 = y1+ (int) Math.abs((fractalLen*Math.cos(angle)));
-            g.drawLine(x1,y1,x2,y2);
-
-            angle = angle+(Math.PI/6);
-
-            x1=x2;
-            y1=y2;
-
-            System.out.println("x2,y2: "+ x2 + "," + y2 + "    "+angle + " *** length:" + length);
-            drawFractal(length-1, x2, y2, g );
-
-        }
-
-    }
-
+    /*override paintComponent calling drawFractal*/
     public void paintComponent (Graphics g)
     {
-
         super.paintComponent (g);
-        System.out.println("calling");
-
         g.setColor (Color.red);
-        //drawFractal (length, 700,500,g);
-        System.out.println("called");
+        drawFractal (length, 500,800, 500, 650,Math.PI/2,g); 
     }
+
 }
-
-
-
-
